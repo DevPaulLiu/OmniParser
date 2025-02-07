@@ -50,7 +50,7 @@ class Omniparser(object):
         return [image, return_list]
     
 parser = Omniparser(config)
-image_path = 'examples/pc_1.png'
+image_path = 'imgs/baidu.png'
 
 #  time the parser
 import time

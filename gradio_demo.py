@@ -58,17 +58,19 @@ def process(
     image = Image.open(io.BytesIO(base64.b64decode(dino_labled_img)))
     print('finish processing')
     # parsed_content_list = '\n'.join(parsed_content_list)
-    parsed_content_list = '\n'.join([f'type: {x['type']}, content: {x["content"]}, interactivity: {x["interactivity"]}' for x in parsed_content_list])
+    for idx, item in enumerate(parsed_content_list):
+        item['id'] = idx
+    parsed_content_list = '\n'.join([f"id: {x['id']}, type: {x['type']}, content: {x['content']}, bbox: {x['bbox']}, interactivity: {x['interactivity']}" for x in parsed_content_list])
     return image, str(parsed_content_list)
 
 
 parser = argparse.ArgumentParser(description='Process model paths and names.')
-parser.add_argument('--icon_detect_model', type=str, required=True, default='weights/icon_detect/best.pt', help='Path to the YOLO model weights')
+parser.add_argument('--icon_detect_model', type=str, required=True, default='weights/icon_detect_v1_5/model_v1_5.pt', help='Path to the YOLO model weights')
 parser.add_argument('--icon_caption_model', type=str, required=True, default='florence2',  help='Name of the caption model')
 
 args = parser.parse_args()
 icon_detect_model, icon_caption_model = args.icon_detect_model, args.icon_caption_model
-
+print(f'Using icon_detect_model: {icon_detect_model}, icon_caption_model: {icon_caption_model}')
 yolo_model = get_yolo_model(model_path=icon_detect_model)
 if icon_caption_model == 'florence2':
     caption_model_processor = get_caption_model_processor(model_name="florence2", model_name_or_path="weights/icon_caption_florence")
